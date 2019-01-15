@@ -1,4 +1,4 @@
-function [ Queue,DelayTrack,HowManyTrack,CountPackets,totalSimilarDecisions,totalDecisions ] = Step_0( flow,Queue,K,p,DelayTrack,start,HowManyTrack,W,CountPackets,pathsMeanCosts,totalSimilarDecisions,totalDecisions )
+function [ Queue,DelayTrack,HowManyTrack,CountPackets,totalSimilarDecisions,totalDecisions,emphiricTotalCost ] = Step_0( flow,Queue,K,p,DelayTrack,start,HowManyTrack,W,CountPackets,pathsMeanCosts,totalSimilarDecisions,totalDecisions,distribution,Paths,links,emphiricTotalCost )
 % This function gives the next random flow of the network and decides in which 
 % queue to put the packets in according to the 
 % Shortest-Path-Aided Backpressure Algorithm in the paper
@@ -29,7 +29,10 @@ while (j<=max(f))
         totalDecisions = totalDecisions + 1;
         if (weight == genieWeight)
             totalSimilarDecisions = totalSimilarDecisions + 1;
+        else
+            disp('************************************');
         end
+        emphiricTotalCost(length(emphiricTotalCost) + 1) = MinPathCost(distribution(:,start),Paths{sf,df}(weight,:),links);
         Queue{sf,df}(weight) = Queue{sf,df}(weight) + Af;
         HowManyTrack{sf,df}(weight) = HowManyTrack{sf,df}(weight) + 1;
         DelayTrack{sf,df}{weight}{HowManyTrack{sf,df}(weight),1}(1) = start; 

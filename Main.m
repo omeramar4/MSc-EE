@@ -29,6 +29,9 @@ pathsMeanCosts = S.pathsMeanCosts;
 isDirected = S.isDirected;
 UpdateWeightsJump = S.UpdateWeightsJump;
 
+bestTotalCost = 0;
+emphiricTotalCost = 0;
+
 totalDecisions = 0;
 totalSimilarDecisions = 0;
 NumberOfLinks = size(links,1);   %Number of links in the network
@@ -51,7 +54,7 @@ for i=1:N
     %Deciding in which queue to inject the packet created with
     %probability p
     %-----------------------------------------------------
-    [Queue,DelayTrack,HowManyTrack,CountPackets,totalSimilarDecisions,totalDecisions] = Step_0(flow,Queue,K,p,DelayTrack,i,HowManyTrack,W,CountPackets,pathsMeanCosts,totalSimilarDecisions,totalDecisions);
+    [Queue,DelayTrack,HowManyTrack,CountPackets,totalSimilarDecisions,totalDecisions,emphiricTotalCost] = Step_0(flow,Queue,K,p,DelayTrack,i,HowManyTrack,W,CountPackets,pathsMeanCosts,totalSimilarDecisions,totalDecisions,distribution,Paths,links,emphiricTotalCost);
     %-----------------------------------------------------
     
     %Create Backpressure matrix by links, The number of row is the source
@@ -87,7 +90,7 @@ for i=1:N
     %-----------------------------------------------------
     
     %Display test, probability, K-parameter and iteration
-    [t o k i]
+    disp([num2str(t) '  ' num2str(o) '  ' num2str(k) '  ' num2str(i)]);
     
 end
 %*********************************************************
@@ -98,6 +101,11 @@ LastIndex = 0;
 for i=1:length(Dest)
     LastIndex = LastIndex + (min(find([FinalDestination{Dest(i)}{:,2}] == 0))) - 1;
 end
+emphiricTotalCost(1) = [];
+bestTotalCost = ones(1,length(emphiricTotalCost))*min(pathsMeanCosts{1,15});
+bestTotalCost = MeanVector(bestTotalCost);
+emphiricTotalCost = MeanVector(emphiricTotalCost);
+regret = emphiricTotalCost - bestTotalCost;
 DecisionDistance = totalDecisions - totalSimilarDecisions;
 MeanDistance = CompareKnownAndUnknown(W,pathsMeanCosts,Nodes,flowPaths);
 SuccessfulTranferRate = LastIndex/CountPackets;

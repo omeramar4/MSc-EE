@@ -5,12 +5,12 @@
 %SETTINGS AND INPUT
 %---------------------------------------------------------
 K = [0.1 1 10 100]; %Shortest-Path weight over Backressure 
-K = 1;
+K = 5;
 p = 0.1:0.1:1;      %Packet Probability by Poisson Distribution
 p = 1;
-N = 20000;          %Time Horizon
+N = 50000;          %Time Horizon
 cost_range = 1;     %Interval of link weights
-UpdateWeightsJump = 100;
+UpdateWeightsJump = 50;
 network = input('Choose network: ');
 isDirected = input(' 0 - Undirected Network, 1 - Directed Network: ');
 
@@ -24,7 +24,8 @@ switch network
         Nodes = 1:16;
         s = [1 1 2 2 3 3 4 5 5 6 6 7 7 8 9 9 10 10 11 11 12 13 14 15]';     %Sources
         t = [2 5 3 6 4 7 8 6 9 7 10 8 11 12 10 13 11 14 12 15 16 14 15 16]';    %Targets
-        flow = [1 6;3 16;9 15];
+        %flow = [1 6;3 16;9 15];
+        flow = [1 15];
     case 2
         %6x6 Grid
         Nodes = 1:36;
@@ -105,10 +106,12 @@ Gamma = ones(1,size(links,1));
 %---------------------------------------------------------
 distribution = zeros(length(s),N);
 mu = zeros(length(s),1);
+gauss_dist = cell(1,length(s));
 for i = 1:length(s)
     mu(i) = randi(8) + 2;
     sigma = 1/(randi(5) + 1);
     distribution(i,:) = normrnd(mu(i),sigma,1,N);
+    gauss_dist{i} = makedist('Normal','mu',mu(i),'sigma',sigma);
 end
 %---------------------------------------------------------
 

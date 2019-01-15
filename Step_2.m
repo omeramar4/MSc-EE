@@ -87,7 +87,7 @@ for j=1:length(index)
                 FinalDestination{dest}{FinalDestinationTracks(dest),8}(1) = distribution(rowOfLink,finish);
             else
                 FinalDestination{dest}{FinalDestinationTracks(dest),8}(tempIndex) = FinalDestination{dest}{FinalDestinationTracks(dest),8}(tempIndex - 1) + distribution(rowOfLink,finish);
-            end          
+            end
         end
     end
 end
