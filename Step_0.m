@@ -1,4 +1,4 @@
-function [ Queue,DelayTrack,HowManyTrack,CountPackets,totalSimilarDecisions,totalDecisions,emphiricTotalCost ] = Step_0( flow,Queue,K,p,DelayTrack,start,HowManyTrack,W,CountPackets,pathsMeanCosts,totalSimilarDecisions,totalDecisions,distribution,Paths,links,emphiricTotalCost )
+function [ Queue,DelayTrack,HowManyTrack,CountPackets,totalSimilarDecisions,totalDecisions,empiricTotalCost,NumOfTimesPathChosen ] = Step_0( flow,Queue,K,p,DelayTrack,start,HowManyTrack,W,CountPackets,pathsMeanCosts,totalSimilarDecisions,totalDecisions,distribution,Paths,links,empiricTotalCost,NumOfTimesPathChosen )
 % This function gives the next random flow of the network and decides in which 
 % queue to put the packets in according to the 
 % Shortest-Path-Aided Backpressure Algorithm in the paper
@@ -24,7 +24,12 @@ while (j<=max(f))
         sf = curr_flow(1);
         df = curr_flow(2);
         temp_weights = W{sf,df};
-        [~,weight] = min((K*temp_weights) + Queue{sf,df});
+%         [~,weight] = min((K*temp_weights) + Queue{sf,df});
+        if (mod(start,10000) == 0)
+            g = 9;
+        end
+        [~,weight] = max(-(K*temp_weights) - Queue{sf,df} + sqrt(2*log10(start)./NumOfTimesPathChosen{sf,df}));
+        NumOfTimesPathChosen{sf,df}(weight) = NumOfTimesPathChosen{sf,df}(weight) + 1;
         [~,genieWeight] = min((K*pathsMeanCosts{sf,df}) + Queue{sf,df});
         totalDecisions = totalDecisions + 1;
         if (weight == genieWeight)
@@ -32,7 +37,7 @@ while (j<=max(f))
         else
             disp('************************************');
         end
-        emphiricTotalCost(length(emphiricTotalCost) + 1) = MinPathCost(distribution(:,start),Paths{sf,df}(weight,:),links);
+        empiricTotalCost(length(empiricTotalCost) + 1) = MinPathCost(distribution(:,start),Paths{sf,df}(weight,:),links);
         Queue{sf,df}(weight) = Queue{sf,df}(weight) + Af;
         HowManyTrack{sf,df}(weight) = HowManyTrack{sf,df}(weight) + 1;
         DelayTrack{sf,df}{weight}{HowManyTrack{sf,df}(weight),1}(1) = start; 

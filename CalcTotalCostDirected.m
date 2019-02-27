@@ -1,4 +1,7 @@
 function [ W ] = CalcTotalCostDirected(flows,Paths,Nodes)
+%This function calculates the number of hops for every possible flow in the
+%network. This is the starting point of the algorithm and only implemented
+%once. This function is implemented only on directed graph.
 
 W = cell(length(Nodes));
 

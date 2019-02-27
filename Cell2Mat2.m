@@ -1,4 +1,7 @@
 function [PathsMat] = Cell2Mat2(PathsCell,Nodes)
+%This function gets paths cell with sub-cells for every source and
+%destination pair in the network and return a cell with matrices of paths
+%instead of cells.
 
 numOfNodes = length(Nodes);
 PathsMat = cell(numOfNodes);

@@ -1,6 +1,8 @@
 function [ W ] = CalcTotalCost2( Nodes,weights,links,paths,Dest )
-%CALCTOTALCOST Summary of this function goes here
-%   Detailed explanation goes here
+%This function calculates the total cost of every path from every node to
+%the defined destinations. This function is for fixed link weights. In this
+%algorithm every weight is 1. 
+%This function is implemented on undirected graph.
 
 W = cell(length(Nodes),length(Nodes));
 for i=1:length(Nodes)

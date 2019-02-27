@@ -7,8 +7,8 @@
 K = [0.1 1 10 100]; %Shortest-Path weight over Backressure 
 K = 5;
 p = 0.1:0.1:1;      %Packet Probability by Poisson Distribution
-p = 1;
-N = 50000;          %Time Horizon
+p = 0.5;
+N = 200000;          %Time Horizon
 cost_range = 1;     %Interval of link weights
 UpdateWeightsJump = 50;
 network = input('Choose network: ');
@@ -25,13 +25,15 @@ switch network
         s = [1 1 2 2 3 3 4 5 5 6 6 7 7 8 9 9 10 10 11 11 12 13 14 15]';     %Sources
         t = [2 5 3 6 4 7 8 6 9 7 10 8 11 12 10 13 11 14 12 15 16 14 15 16]';    %Targets
         %flow = [1 6;3 16;9 15];
-        flow = [1 15];
+        flow = [1 16];
     case 2
         %6x6 Grid
         Nodes = 1:36;
         s = [1 1 2 2 3 3 4 4 5 5 6 7 7 8 8 9 9 10 10 11 11 12 13 13 14 14 15 15 16 16 17 17 18 19 19 20 20 21 21 22 22 23 23 24 25 25 26 26 27 27 28 28 29 29 30 31 32 33 34 35]';
         t = [2 7 3 8 4 9 5 10 6 11 12 8 13 9 14 10 15 11 16 12 17 18 14 19 15 20 16 21 17 22 18 23 24 20 25 21 26 22 27 23 28 24 29 30 26 31 27 32 28 33 29 34 30 35 36 32 33 34 35 36]';
         Paths = importdata('6x6Paths.mat');
+        Paths = Cell2Mat2(Paths,Nodes);
+        flow = [1 24];
     case 3
         Nodes = 1:8;
         s = [1 1 2 2 3 4 5 5 6 6 8]';
@@ -137,7 +139,8 @@ Queue = cell(length(Nodes));
 DelayTrack = cell(length(Nodes));
 HowManyTrack = cell(length(Nodes));
 WhosNextTrack = cell(length(Nodes));
-[Queue, DelayTrack, HowManyTrack, WhosNextTrack] = InitializeQueueAndTracking(N,Nodes,Queue,W,flowPaths,DelayTrack,HowManyTrack,WhosNextTrack);
+NumOfTimesPathChosen = cell(length(Nodes));
+[Queue, DelayTrack, HowManyTrack, WhosNextTrack, NumOfTimesPathChosen] = InitializeQueueAndTracking(N,Queue,W,flowPaths,DelayTrack,HowManyTrack,WhosNextTrack,NumOfTimesPathChosen);
 %---------------------------------------------------------
 
 %SET UP RESULTS MATRICES
@@ -196,6 +199,7 @@ S.Paths = Paths;
 S.pathsMeanCosts = pathsMeanCosts;
 S.isDirected = isDirected;
 S.UpdateWeightsJump = UpdateWeightsJump;
+S.NumOfTimesPathChosen = NumOfTimesPathChosen;
 %---------------------------------------------------------
 
 %Main Loop - runs for each value of the pair (K,lambda)

@@ -1,6 +1,9 @@
 function [ W,LastEstimated,avgs ] = EstimatePathCosts( FinalDestination,W,Dest,LastEstimated,avgs,Paths )
-%ESTIMATEPATHCOSTS Summary of this function goes here
-%   Detailed explanation goes here
+%This function is called every "UpdateWeightsJump" iteration. It calculates
+%the average path cost realizations for every packet that has arrived to
+%its destination.
+
+
 sources = 0;
 n = 1;
 for i=1:length(Dest)

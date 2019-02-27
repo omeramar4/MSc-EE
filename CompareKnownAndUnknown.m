@@ -1,4 +1,7 @@
 function [MeanDistance] = CompareKnownAndUnknown(W,pathsMeanCosts,Nodes,flowPaths)
+%After the main loop ends, this function calculates the distance between
+%the mean value of the paths distributions and the approximation of paths'
+%cost calculated in the main loop.
 
 MeanDistance = cell(length(Nodes));
 
