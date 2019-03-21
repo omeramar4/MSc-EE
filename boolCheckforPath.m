@@ -2,6 +2,7 @@ function [ bool ] = boolCheckforPath( flow,line )
 %BOOLCHECKFORPATH Summary of this function goes here
 %   Detailed explanation goes here
 
+
 % Result:
 %   1 - two single digit
 %   2 - first single digit, last double digit
