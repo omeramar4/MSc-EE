@@ -1,4 +1,4 @@
-function [ Queue,DelayTrack,HowManyTrack,CountPackets,totalSimilarDecisions,totalDecisions,empiricTotalCost,NumOfTimesPathChosen ] = Step_0( flow,Queue,K,p,DelayTrack,start,HowManyTrack,W,CountPackets,pathsMeanCosts,totalSimilarDecisions,totalDecisions,distribution,Paths,links,empiricTotalCost,NumOfTimesPathChosen )
+function [ Queue,DelayTrack,HowManyTrack,CountPackets,totalSimilarDecisions,totalDecisions,empiricTotalCost,genieTotalCost,NumOfTimesPathChosen,FinalDestination,FinalDestinationTracks ] = Step_0( flow,Queue,K,p,DelayTrack,start,HowManyTrack,W,CountPackets,pathsMeanCosts,totalSimilarDecisions,totalDecisions,distribution,Paths,links,empiricTotalCost,genieTotalCost,NumOfTimesPathChosen,FinalDestination,FinalDestinationTracks )
 % This function gives the next random flow of the network and decides in which 
 % queue to put the packets in according to the 
 % Shortest-Path-Aided Backpressure Algorithm in the paper
@@ -24,13 +24,13 @@ while (j<=max(f))
         sf = curr_flow(1);
         df = curr_flow(2);
         temp_weights = W{sf,df};
-%         [~,weight] = min((K*temp_weights) + Queue{sf,df});
-        if (mod(start,10000) == 0)
-            g = 9;
-        end
-        [~,weight] = max(-(K*temp_weights) - Queue{sf,df} + sqrt(2*log10(start)./NumOfTimesPathChosen{sf,df}));
+        [~,weight] = max(-(K*temp_weights) + sqrt(2*log(start)./NumOfTimesPathChosen{sf,df}));
+        %[~,weight] = min((K*temp_weights) + Queue{sf,df});
+        %[~,weight] = max(-(K*temp_weights) - Queue{sf,df} + sqrt(2*log(start)./NumOfTimesPathChosen{sf,df}));
         NumOfTimesPathChosen{sf,df}(weight) = NumOfTimesPathChosen{sf,df}(weight) + 1;
-        [~,genieWeight] = min((K*pathsMeanCosts{sf,df}) + Queue{sf,df});
+        [FinalDestination,FinalDestinationTracks] = TakePath(sf,df,weight,distribution,Paths,links,start,FinalDestination,FinalDestinationTracks);
+        %[~,genieWeight] = max(-(K*pathsMeanCosts{sf,df}) - Queue{sf,df});
+        [~,genieWeight] = max(-(K*pathsMeanCosts{sf,df}));
         totalDecisions = totalDecisions + 1;
         if (weight == genieWeight)
             totalSimilarDecisions = totalSimilarDecisions + 1;
@@ -38,6 +38,7 @@ while (j<=max(f))
             disp('************************************');
         end
         empiricTotalCost(length(empiricTotalCost) + 1) = MinPathCost(distribution(:,start),Paths{sf,df}(weight,:),links);
+        genieTotalCost(length(genieTotalCost) + 1) = MinPathCost(distribution(:,start),Paths{sf,df}(genieWeight,:),links);
         Queue{sf,df}(weight) = Queue{sf,df}(weight) + Af;
         HowManyTrack{sf,df}(weight) = HowManyTrack{sf,df}(weight) + 1;
         DelayTrack{sf,df}{weight}{HowManyTrack{sf,df}(weight),1}(1) = start; 
@@ -47,6 +48,7 @@ while (j<=max(f))
         DelayTrack{sf,df}{weight}{HowManyTrack{sf,df}(weight),5} = 0;
         DelayTrack{sf,df}{weight}{HowManyTrack{sf,df}(weight),6}(1) = sf;
         DelayTrack{sf,df}{weight}{HowManyTrack{sf,df}(weight),7}(1) = W{sf,df}(weight);
+        DelayTrack{sf,df}{weight}{HowManyTrack{sf,df}(weight),9} = weight;
     end
     j = j + 1;
 end

@@ -5,12 +5,12 @@
 %SETTINGS AND INPUT
 %---------------------------------------------------------
 K = [0.1 1 10 100]; %Shortest-Path weight over Backressure 
-K = 5;
+K = 1;
 p = 0.1:0.1:1;      %Packet Probability by Poisson Distribution
-p = 0.5;
-N = 200000;          %Time Horizon
+p = 1.5;
+N = 1000000;          %Time Horizon
 cost_range = 1;     %Interval of link weights
-UpdateWeightsJump = 50;
+UpdateWeightsJump = 100;
 network = input('Choose network: ');
 isDirected = input(' 0 - Undirected Network, 1 - Directed Network: ');
 
@@ -22,8 +22,10 @@ switch network
     case 1
         %4x4 Grid
         Nodes = 1:16;
-        s = [1 1 2 2 3 3 4 5 5 6 6 7 7 8 9 9 10 10 11 11 12 13 14 15]';     %Sources
-        t = [2 5 3 6 4 7 8 6 9 7 10 8 11 12 10 13 11 14 12 15 16 14 15 16]';    %Targets
+        s = [1 1 2 2 3 3 4 5 5 6 6 7 7 7 8 9 9 10 10 10 11 11 12 13 14 15]';     %Sources
+        t = [2 5 3 6 4 7 8 6 9 7 10 8 11 16 12 10 13 11 14 15 12 15 16 14 15 16]';    %Targets
+        %s = [1 1 2 2 3 3 4 5 5 6 6 7 7 8 9 9 10 10 11 11 12 13 14 15]';     %Sources
+        %t = [2 5 3 6 4 7 8 6 9 7 10 8 11 12 10 13 11 14 12 15 16 14 15 16]';    %Targets
         %flow = [1 6;3 16;9 15];
         flow = [1 16];
     case 2
@@ -159,9 +161,10 @@ TotalDecisions = zeros(length(K),length(p));
 %---------------------------------------------------------
 FinalDestination = cell(length(Nodes),1);
 for i=1:length(Dest)
-    FinalDestination{Dest(i)} = cell(N + 10000,8);
-    FinalDestination{Dest(i)}(:,[1 6 7 8]) = {zeros(length(Nodes),1)};
-    FinalDestination{Dest(i)}(:,2) = {0};
+    FinalDestination{Dest(i)} = zeros(N + 10000,9);
+    %FinalDestination{Dest(i)} = cell(N + 10000,9);
+    %FinalDestination{Dest(i)}(:,[1 6 7 8]) = {zeros(length(Nodes),1)};
+    %FinalDestination{Dest(i)}(:,2) = {0};
 end
 FinalDestinationTracks = zeros(length(Nodes),1);
 %---------------------------------------------------------

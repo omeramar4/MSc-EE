@@ -44,7 +44,7 @@ for j=1:length(index)
                     WhosNextTrack{mid_src,dest}(curr_weight) = WhosNextTrack{mid_src,dest}(curr_weight) - 1;
                 end
                 
-                for u = 1:8
+                for u = 1:9
                     DelayTrack{mid_dest,dest}{next_weight}{HowManyTrack{mid_dest,dest}(next_weight),u} = DelayTrack{mid_src,dest}{curr_weight}{WhosNextTrack{mid_src,dest}(curr_weight),u};
                 end
                 [~,rowOfLink] = ismember([mid_src,mid_dest],link,'rows');
@@ -71,7 +71,7 @@ for j=1:length(index)
             if (DelayTrack{mid_src,dest}{curr_weight}{WhosNextTrack{mid_src,dest}(curr_weight),1}(1)==0)
                     WhosNextTrack{mid_src,dest}(curr_weight) = WhosNextTrack{mid_src,dest}(curr_weight) - 1;
             end
-            for u = 1:8
+            for u = 1:9
                 FinalDestination{dest}{FinalDestinationTracks(dest),u} = DelayTrack{mid_src,dest}{curr_weight}{WhosNextTrack{mid_src,dest}(curr_weight),u};
             end
             [~,rowOfLink] = ismember([mid_src,mid_dest],link,'rows');
