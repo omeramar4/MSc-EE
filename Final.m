@@ -7,10 +7,11 @@
 K = [0.1 1 10 100]; %Shortest-Path weight over Backressure 
 K = 1;
 p = 0.1:0.1:1;      %Packet Probability by Poisson Distribution
-p = 1.5;
-N = 1000000;          %Time Horizon
+p = 0.3;
+N = 20000;          %Time Horizon
 cost_range = 1;     %Interval of link weights
-UpdateWeightsJump = 100;
+allTheWayFlag = 0;
+UpdateWeightsJump = 10;
 network = input('Choose network: ');
 isDirected = input(' 0 - Undirected Network, 1 - Directed Network: ');
 
@@ -22,12 +23,12 @@ switch network
     case 1
         %4x4 Grid
         Nodes = 1:16;
-        s = [1 1 2 2 3 3 4 5 5 6 6 7 7 7 8 9 9 10 10 10 11 11 12 13 14 15]';     %Sources
-        t = [2 5 3 6 4 7 8 6 9 7 10 8 11 16 12 10 13 11 14 15 12 15 16 14 15 16]';    %Targets
+        s = [1 1 2 2 3 3 3 4 5 5 5 6 6 7 7 8 9 9 10 10 11 11 12 13 14 15]';     %Sources
+        t = [2 5 3 6 4 7 8 8 6 9 11 7 10 8 11 12 10 13 11 14 12 15 16 14 15 16]';    %Targets
         %s = [1 1 2 2 3 3 4 5 5 6 6 7 7 8 9 9 10 10 11 11 12 13 14 15]';     %Sources
         %t = [2 5 3 6 4 7 8 6 9 7 10 8 11 12 10 13 11 14 12 15 16 14 15 16]';    %Targets
         %flow = [1 6;3 16;9 15];
-        flow = [1 16];
+        flow = [2 12];
     case 2
         %6x6 Grid
         Nodes = 1:36;
@@ -35,7 +36,7 @@ switch network
         t = [2 7 3 8 4 9 5 10 6 11 12 8 13 9 14 10 15 11 16 12 17 18 14 19 15 20 16 21 17 22 18 23 24 20 25 21 26 22 27 23 28 24 29 30 26 31 27 32 28 33 29 34 30 35 36 32 33 34 35 36]';
         Paths = importdata('6x6Paths.mat');
         Paths = Cell2Mat2(Paths,Nodes);
-        flow = [1 24];
+        flow = [1 36];
     case 3
         Nodes = 1:8;
         s = [1 1 2 2 3 4 5 5 6 6 8]';
@@ -161,10 +162,13 @@ TotalDecisions = zeros(length(K),length(p));
 %---------------------------------------------------------
 FinalDestination = cell(length(Nodes),1);
 for i=1:length(Dest)
-    FinalDestination{Dest(i)} = zeros(N + 10000,9);
-    %FinalDestination{Dest(i)} = cell(N + 10000,9);
-    %FinalDestination{Dest(i)}(:,[1 6 7 8]) = {zeros(length(Nodes),1)};
-    %FinalDestination{Dest(i)}(:,2) = {0};
+    if (allTheWayFlag == 1)
+        FinalDestination{Dest(i)} = zeros(N + 10000,9);
+    else
+        FinalDestination{Dest(i)} = cell(N + 10000,9);
+        FinalDestination{Dest(i)}(:,[1 6 7 8]) = {zeros(length(Nodes),1)};
+        FinalDestination{Dest(i)}(:,2) = {0};
+    end
 end
 FinalDestinationTracks = zeros(length(Nodes),1);
 %---------------------------------------------------------
@@ -203,6 +207,7 @@ S.pathsMeanCosts = pathsMeanCosts;
 S.isDirected = isDirected;
 S.UpdateWeightsJump = UpdateWeightsJump;
 S.NumOfTimesPathChosen = NumOfTimesPathChosen;
+S.allTheWayFlag = allTheWayFlag;
 %---------------------------------------------------------
 
 %Main Loop - runs for each value of the pair (K,lambda)

@@ -29,7 +29,7 @@ pathsMeanCosts = S.pathsMeanCosts;
 isDirected = S.isDirected;
 UpdateWeightsJump = S.UpdateWeightsJump;
 NumOfTimesPathChosen = S.NumOfTimesPathChosen;
-flag = 1;
+allTheWayFlag = S.allTheWayFlag;
 
 empiricTotalCost = 0;
 genieTotalCost = 0;
@@ -55,18 +55,20 @@ for i=1:N
     %Deciding in which queue to inject the packet created with
     %probability p
     %-----------------------------------------------------
-    [Queue,DelayTrack,HowManyTrack,CountPackets,totalSimilarDecisions,totalDecisions,empiricTotalCost,genieTotalCost,NumOfTimesPathChosen,FinalDestination,FinalDestinationTracks] = Step_0(flow,Queue,K,p,DelayTrack,i,HowManyTrack,W,CountPackets,pathsMeanCosts,totalSimilarDecisions,totalDecisions,distribution,Paths,links,empiricTotalCost,genieTotalCost,NumOfTimesPathChosen,FinalDestination,FinalDestinationTracks);
+    [Queue,DelayTrack,HowManyTrack,CountPackets,totalSimilarDecisions,totalDecisions,empiricTotalCost,genieTotalCost,NumOfTimesPathChosen,FinalDestination,FinalDestinationTracks] = Step_0(flow,Queue,K,p,DelayTrack,i,HowManyTrack,W,CountPackets,pathsMeanCosts,totalSimilarDecisions,totalDecisions,distribution,Paths,links,empiricTotalCost,genieTotalCost,NumOfTimesPathChosen,FinalDestination,FinalDestinationTracks,allTheWayFlag);
     %-----------------------------------------------------
     
-    if (flag == 1)
+    %Ignore middle transfers of data, take packets all the way
+    %-----------------------------------------------------
+    if (allTheWayFlag == 1)
         if (~mod(i,UpdateWeightsJump))
             tempVec = FinalDestination{16}(:,1);
             LastIndex = min(find(tempVec == 0)) - 1;
             [W] = NewAverageCalc(size(Paths{1,16},1),FinalDestination{16}(1:LastIndex,:),W);
         end
-        i
         continue;
     end
+    %-----------------------------------------------------
     
     %Create Backpressure matrix by links, The number of row is the source
     %and the number of column is the destination of each link
@@ -82,13 +84,13 @@ for i=1:N
     
     %STEP 1 - Shortest-Path-Aided Backpressure Algorithm
     %-----------------------------------------------------
-    [max_index,flag] = Step_1(P,schedule,NumberOfLinks,Gamma,links,isDirected);
+    [max_index,allTheWayFlag] = Step_1(P,schedule,NumberOfLinks,Gamma,links,isDirected);
     %-----------------------------------------------------
     
     %STEP 2 - Shortest-Path-Aided Backpressure Algorithm
     %-----------------------------------------------------
     if (max_index ~= 0)
-        [Queue,DelayTrack,HowManyTrack,FinalDestination,FinalDestinationTracks,WhosNextTrack] = Step_2(max_queue,Gamma,max_index,P,links,Queue,weights,DelayTrack,HowManyTrack,i,FinalDestination,FinalDestinationTracks,WhosNextTrack,distribution,flag,isDirected);
+        [Queue,DelayTrack,HowManyTrack,FinalDestination,FinalDestinationTracks,WhosNextTrack] = Step_2(max_queue,Gamma,max_index,P,links,Queue,weights,DelayTrack,HowManyTrack,i,FinalDestination,FinalDestinationTracks,WhosNextTrack,distribution,allTheWayFlag,isDirected);
     end
     %-----------------------------------------------------
     
@@ -115,11 +117,8 @@ end
 
 empiricTotalCost(1) = [];
 genieTotalCost(1) = [];
-bestTotalCost = ones(1,length(empiricTotalCost))*min(pathsMeanCosts{1,16});
-bestTotalCost = MeanVector(bestTotalCost);
 empiricTotalCost = MeanVector(empiricTotalCost);
 genieTotalCost = MeanVector(genieTotalCost);
-regret = empiricTotalCost - bestTotalCost;
 regret2 = empiricTotalCost - genieTotalCost;
 DecisionDistance = totalDecisions - totalSimilarDecisions;
 DecisionRatio = totalSimilarDecisions/totalDecisions;
