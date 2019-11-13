@@ -25,7 +25,13 @@ for i=1:length(Dest)
         cutTempMatZeros = (min(find([tempMatRow{1}] == 0))) - 1;
         cutTempMatPahts = (min(find([tempMatRow{6}] == 0))) - 1;
         tempPath = tempMatRow{6}(1:cutTempMatPahts);
-        sumOfWeightsForPath = flip(tempMatRow{8}(1:length(tempPath) - 1));
+        %Handling weights vector
+        %------
+        tempSumWeights = tempMatRow{8}(1:length(tempPath) - 1);
+        allTheWayWeight = tempSumWeights(end);
+        tempSumWeights = allTheWayWeight - flip(tempSumWeights(1:end - 1));
+        %------
+        sumOfWeightsForPath = flip([tempSumWeights; allTheWayWeight]);
         for k=1:cutTempMatZeros
             tempVec = [tempMatRow{1}(k) tempMatRow{2} tempMatRow{3} tempMatRow{4} tempMatRow{5} tempMatRow{6}(k) tempMatRow{7}(k) sumOfWeightsForPath(k)];
             sources(n) = tempVec(6);
@@ -53,6 +59,9 @@ for i=1:length(Dest)
         for h=1:len
             if (avgs{sources(m),Dest(i)}(h,1) == 0) 
                 continue; 
+            end
+            if (avgs{sources(m),Dest(i)}(h,2) + avgs{sources(m),Dest(i)}(h,4) == 0)
+                continue;
             end
             avgs{sources(m),Dest(i)}(h,1) = ((avgs{sources(m),Dest(i)}(h,1)*avgs{sources(m),Dest(i)}(h,2)) + avgs{sources(m),Dest(i)}(h,3))/(avgs{sources(m),Dest(i)}(h,2) + avgs{sources(m),Dest(i)}(h,4));  
             W{sources(m),Dest(i)}(h) = avgs{sources(m),Dest(i)}(h,1);

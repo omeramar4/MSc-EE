@@ -1,4 +1,4 @@
-function [ QueueLengthAverage,DelayAverage,SuccessfulTranferRate,MeanDistance,DecisionDistance,totalDecisions ] = Main( K,p,S,t,o,k )
+function [ QueueLengthAverage,DelayAverage,SuccessfulTranferRate,MeanDistance,DecisionDistance,totalDecisions,regret ] = Main( K,p,S,t,o,k )
 %This function calculates:
 %1. End-to-End Delay Average.
 %2. Total Path Cost Average of all successful transmitions
@@ -50,7 +50,10 @@ end
 %MAIN LOOP   
 %*********************************************************
 for i=1:N
-
+    
+    if (mod(i,20000) == 0)
+        K = 1;
+    end
     %STEP 0 - Shortest-Path-Aided Backpressure Algorithm
     %Deciding in which queue to inject the packet created with
     %probability p
@@ -103,7 +106,9 @@ for i=1:N
     %-----------------------------------------------------
     
     %Display test, probability, K-parameter and iteration
-    disp([num2str(t) '  ' num2str(o) '  ' num2str(k) '  ' num2str(i)]);
+    if (~mod(i,1000))
+        disp([num2str(t) '  ' num2str(o) '  ' num2str(k) '  ' num2str(i)]);
+    end
     
 end
 %*********************************************************
@@ -117,20 +122,27 @@ end
 
 empiricTotalCost(1) = [];
 genieTotalCost(1) = [];
-empiricTotalCost = MeanVector(empiricTotalCost);
-genieTotalCost = MeanVector(genieTotalCost);
-regret2 = empiricTotalCost - genieTotalCost;
+regret1 = MeanVector(empiricTotalCost);
+regret2 = MeanVector(genieTotalCost);
+regret = regret1 - regret2;
 DecisionDistance = totalDecisions - totalSimilarDecisions;
-DecisionRatio = totalSimilarDecisions/totalDecisions;
+% DecisionRatio = totalSimilarDecisions/totalDecisions;
 MeanDistance = CompareKnownAndUnknown(W,pathsMeanCosts,Nodes,flowPaths);
 SuccessfulTranferRate = LastIndex/CountPackets;
 DelayAverage = CalcDelayAverage(FinalDestination,Dest);
 QueueLengths = QueueLengths(QueueLengths>0);
 QueueLengthAverage = mean(mean(QueueLengths,2));
 
+%Plot regret
+figure; plot(regret,'Color',[50 191 255]./255,'LineWidth',2.5);
+title('Regret Curve','FontSize',14,'FontWeight','bold');
+xlabel('Decisions (time)'); ylabel('Regret/log(t)');
+set(gca,'FontSize',12);
+grid on;
+
 % numOfTimesPathTaken = zeros(1,size(Paths{1,16},1));
-% for i=1:size(FinalDestination{16},1)
-%     [~,index] = ismember((FinalDestination{16}{i,6}(1:7))',Paths{1,16},'rows');
+% for i=1:size(FinalDestination{12},1)
+%     [~,index] = ismember((FinalDestination{12}{i,6}(1:5))',Paths{1,12},'rows');
 %     numOfTimesPathTaken(index) = numOfTimesPathTaken(index) + 1;
 % end
 % chosenVsTaken = [NumOfTimesPathChosen{1,16} numOfTimesPathTaken'];
