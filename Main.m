@@ -46,7 +46,7 @@ for i=1:size(flow,1)
     EstimatedW{i} = [W{flow(i,1),flow(i,2)} zeros(length(W{flow(i,1),flow(i,2)}),N/UpdateWeightsJump)];
 end
 %---------------------------------------------------------
-
+prevMaxValue = 0;
 %MAIN LOOP   
 %*********************************************************
 for i=1:N
@@ -108,6 +108,8 @@ for i=1:N
     %Display test, probability, K-parameter and iteration
     if (~mod(i,1000))
         disp([num2str(t) '  ' num2str(o) '  ' num2str(k) '  ' num2str(i)]);
+        disp([num2str(max(empiricTotalCost)) '      ' num2str(max(empiricTotalCost) - prevMaxValue)]);
+        prevMaxValue = max(empiricTotalCost);
     end
     
 end

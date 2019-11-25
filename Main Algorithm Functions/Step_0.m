@@ -25,16 +25,14 @@ while (j<=max(f))
         df = curr_flow(2);
         temp_weights = W{sf,df};
         [~,weight] = max(-(K*temp_weights + Queue{sf,df}) + sqrt(2*log(start)./NumOfTimesPathChosen{sf,df}));
-        [empiricMaxVal,aaa] = min((K*temp_weights) + Queue{sf,df});
+        [empiricMaxVal,empiricWeight] = min((K*temp_weights) + Queue{sf,df});
         NumOfTimesPathChosen{sf,df}(weight) = NumOfTimesPathChosen{sf,df}(weight) + 1;
         if (flag == 1)
             [FinalDestination,FinalDestinationTracks] = TakePath(sf,df,weight,distribution,Paths,links,start,FinalDestination,FinalDestinationTracks);
         end
         [genieMaxVal,genieWeight] = min(K*pathsMeanCosts{sf,df} + Queue{sf,df});
+%         disp(['Decision index: Genie - ' num2str(genieWeight) ', Empiric - ' num2str(aaa)])
         totalDecisions = totalDecisions + 1;
-        if (start > 10000 - 20 || (start < 6))
-            g = 9;
-        end
         if (weight == genieWeight)% || abs(pathsMeanCosts{sf,df}(genieWeight) - W{sf,df}(weight)) <= 0.1)
             totalSimilarDecisions = totalSimilarDecisions + 1;
 %         else
@@ -46,7 +44,11 @@ while (j<=max(f))
         %empiricTotalCost(length(empiricTotalCost) + 1) = MinPathCost(distribution(:,start),Paths{sf,df}(weight,:),links);
         %genieTotalCost(length(genieTotalCost) + 1) = MinPathCost(distribution(:,start),Paths{sf,df}(genieWeight,:),links);
         %---------
-
+%         if (aaa == genieWeight)
+%             empiricTotalCost(length(empiricTotalCost) + 1) = empiricTotalCost(length(empiricTotalCost));
+%         else
+%             empiricTotalCost(length(empiricTotalCost) + 1) = empiricTotalCost(length(empiricTotalCost)) + 1;
+%         end
         empiricTotalCost(length(empiricTotalCost) + 1) = empiricMaxVal;
         genieTotalCost(length(genieTotalCost) + 1) = genieMaxVal;
         Queue{sf,df}(weight) = Queue{sf,df}(weight) + Af;

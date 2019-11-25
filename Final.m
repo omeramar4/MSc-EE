@@ -14,10 +14,10 @@ addpath('Saved Data');
 %% SETTINGS AND INPUT
 %---------------------------------------------------------
 K = [0.1 1 10 100]; %Shortest-Path weight over Backressure 
-K = 2;
+K = 5;
 p = 0.1:0.1:1;      %Packet Probability by Poisson Distribution
-p = 1.5;
-N = 1000000;         %Time Horizon
+p = 2;
+N = 50000;         %Time Horizon
 cost_range = 1;     %Interval of link weights
 allTheWayFlag = 0;
 UpdateWeightsJump = 10;
@@ -63,6 +63,11 @@ switch network
         s = res(:,1);
         t = res(:,2);
         flow = [1 t(randi(length(t)))];
+    case 6
+        Nodes = 1:7;
+        s = [1 1 1 2 2 4 5 6 6 7]';
+        t = [2 4 6 3 4 5 3 4 7 5]';
+        flow = [1 3];
 end
 
 links = [s t];
@@ -157,13 +162,13 @@ for i = 1:length(favoritePathLinks)
     gauss_dist{favoritePathLinks(i)} = makedist('Normal','mu',mu(favoritePathLinks(i)),'sigma',sigma);
 end
 mu(worstLink) = 0.2;
-distribution(11,:) = normrnd(mu(11),sigma,1,N);
-gauss_dist{11} = makedist('Normal','mu',mu(11),'sigma',sigma);
-favoritePathLinks = [favoritePathLinks 11];
+distribution(worstLink,:) = normrnd(mu(worstLink),sigma,1,N);
+gauss_dist{worstLink} = makedist('Normal','mu',mu(worstLink),'sigma',sigma);
+favoritePathLinks = [favoritePathLinks worstLink];
 for i = 1:length(s)
     if (~ismember(i,favoritePathLinks)) 
         mu(i) = 0.1;
-        sigma = randsrc(1,1,[0.02 0.03 0.07 0.08;0.25 0.25 0.25 0.25]);
+        sigma = randsrc(1,1,[0.02 0.03 0.07 0.08 0.11 0.05 0.18 0.095 0.135 0.155;0.1*ones(1,10)]);
         distribution(i,:) = normrnd(mu(i),sigma,1,N);
         gauss_dist{i} = makedist('Normal','mu',mu(i),'sigma',sigma);
     end

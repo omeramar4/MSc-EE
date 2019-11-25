@@ -22,7 +22,7 @@ for i=1:length(Dest)
     
     for j=1:size(tempMat,1)
         tempMatRow = tempMat(j,:);
-        cutTempMatZeros = (min(find([tempMatRow{1}] == 0))) - 1;
+        cutTempMatZeros = (min(find([tempMatRow{1}] == 0))) - 2;
         cutTempMatPahts = (min(find([tempMatRow{6}] == 0))) - 1;
         tempPath = tempMatRow{6}(1:cutTempMatPahts);
         %Handling weights vector

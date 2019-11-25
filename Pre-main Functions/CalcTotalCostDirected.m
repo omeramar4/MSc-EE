@@ -8,7 +8,7 @@ W = cell(length(Nodes));
 for i = 1:size(flows,1)
     src_dest = flows(i,:);
     paths_temp_mat = Paths{src_dest(1),src_dest(2)};
-    W{src_dest(1),src_dest(2)} = 0.1*ones(size(paths_temp_mat,1),1);
+    W{src_dest(1),src_dest(2)} = 0.02*ones(size(paths_temp_mat,1),1);
 %     
 %     for j = 1:size(paths_temp_mat,1)
 %         firstZero = min(find(paths_temp_mat(j,:) == 0));

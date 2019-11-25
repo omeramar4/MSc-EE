@@ -78,6 +78,7 @@ for j=1:length(index)
             if (rowOfLink == 0)
                 [~,rowOfLink] = ismember([mid_dest,mid_src],link,'rows');
             end
+            FinalDestination{dest}{FinalDestinationTracks(dest),1}(min(find(FinalDestination{dest}{FinalDestinationTracks(dest),1}==0))) = finish;
             FinalDestination{dest}{FinalDestinationTracks(dest),4} = FinalDestination{dest}{FinalDestinationTracks(dest),4} + weights(index(j));
             WhosNextTrack{mid_src,dest}(curr_weight) = WhosNextTrack{mid_src,dest}(curr_weight) + 1;
             FinalDestination{dest}{FinalDestinationTracks(dest),6}(min(find(FinalDestination{dest}{FinalDestinationTracks(dest),6}==0))) = dest;
