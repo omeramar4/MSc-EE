@@ -1,4 +1,4 @@
-function [favoritePathLinks] = ChooseFavoritePath(links,paths)
+function [favoritePathLinks, row] = ChooseFavoritePath(links,paths)
 
 row = randi(size(paths,1));
 path = paths(row,:);

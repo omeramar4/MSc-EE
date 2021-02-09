@@ -1,7 +1,7 @@
 function [ P,max_queue ] = Pcreator( Gmat,queue,W,D,Nodes,isDirected )
 %PCREATOR2 Summary of this function goes here
 %   Detailed explanation goes here
-
+global q_levels
 max_queue = cell(length(Nodes));
 P = zeros(length(Nodes));
 
@@ -22,7 +22,7 @@ for i=1:size(Gmat,1)
         end
         for j=1:length(D)  
             for k=1:length(W{src,D(j)})       %Every weight from m
-
+%                 [~,q_level] = min(abs(q_levels - W{src,D(j)}(k)));
                 if (dst==D(j))
                     if (queue{src,D(j)}(k)>queueP(t))
                         queueP(t) = queue{src,D(j)}(k);

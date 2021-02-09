@@ -21,7 +21,7 @@ for j=1:length(index)
             mid_dest = link(index(j),1);
         end
     end
-    if (P(mid_src,mid_dest)>0)      %Find if link (mid_src,mid_dest) is going to transmit packet
+    if (P(mid_src,mid_dest) > 0)      %Find if link (mid_src,mid_dest) is going to transmit packet
         dest = max_queue{mid_src,mid_dest}(1);
         curr_weight = max_queue{mid_src,mid_dest}(3);
         if (mid_dest==dest)
